@@ -1,0 +1,290 @@
+{
+  "food": [
+    {
+      "longitude_deg": -149.7065,
+      "latitude_deg": -13.0588,
+      "strength": 0.79996
+    },
+    {
+      "longitude_deg": -137.7299,
+      "latitude_deg": 37.0588,
+      "strength": 0.79978
+    },
+    {
+      "longitude_deg": 34.1683,
+      "latitude_deg": -46.9412,
+      "strength": 0.79958
+    },
+    {
+      "longitude_deg": -62.3483,
+      "latitude_deg": 40.5882,
+      "strength": 0.79951
+    },
+    {
+      "longitude_deg": 161.683,
+      "latitude_deg": 22.2353,
+      "strength": 0.7991
+    },
+    {
+      "longitude_deg": -70.8023,
+      "latitude_deg": 24.3529,
+      "strength": 0.7988
+    },
+    {
+      "longitude_deg": 13.0333,
+      "latitude_deg": 46.9412,
+      "strength": 0.79872
+    },
+    {
+      "longitude_deg": -147.593,
+      "latitude_deg": -70.2353,
+      "strength": 0.79833
+    },
+    {
+      "longitude_deg": 165.91,
+      "latitude_deg": 66.7059,
+      "strength": 0.79819
+    },
+    {
+      "longitude_deg": 39.0998,
+      "latitude_deg": -14.4706,
+      "strength": 0.79817
+    },
+    {
+      "longitude_deg": -151.82,
+      "latitude_deg": 50.4706,
+      "strength": 0.79816
+    },
+    {
+      "longitude_deg": -120.8219,
+      "latitude_deg": 31.4118,
+      "strength": 0.79757
+    },
+    {
+      "longitude_deg": -128.5714,
+      "latitude_deg": -30.7059,
+      "strength": 0.79714
+    },
+    {
+      "longitude_deg": -139.1389,
+      "latitude_deg": 5.2941,
+      "strength": 0.79564
+    },
+    {
+      "longitude_deg": 112.3679,
+      "latitude_deg": 24.3529,
+      "strength": 0.79484
+    },
+    {
+      "longitude_deg": -79.9609,
+      "latitude_deg": -1.0588,
+      "strength": 0.79247
+    }
+  ],
+  "minerals": [
+    {
+      "longitude_deg": -119.4129,
+      "latitude_deg": -27.8824,
+      "strength": 0.94961
+    },
+    {
+      "longitude_deg": -137.7299,
+      "latitude_deg": 36.3529,
+      "strength": 0.94808
+    },
+    {
+      "longitude_deg": -36.9863,
+      "latitude_deg": 3.1765,
+      "strength": 0.92192
+    },
+    {
+      "longitude_deg": -5.9883,
+      "latitude_deg": -11.6471,
+      "strength": 0.91822
+    },
+    {
+      "longitude_deg": 172.2505,
+      "latitude_deg": -29.2941,
+      "strength": 0.9003
+    },
+    {
+      "longitude_deg": -78.5519,
+      "latitude_deg": 20.1176,
+      "strength": 0.8882
+    },
+    {
+      "longitude_deg": -151.82,
+      "latitude_deg": -60.3529,
+      "strength": 0.88352
+    },
+    {
+      "longitude_deg": -79.2564,
+      "latitude_deg": -71.6471,
+      "strength": 0.87506
+    },
+    {
+      "longitude_deg": -172.2505,
+      "latitude_deg": 39.1765,
+      "strength": 0.87425
+    },
+    {
+      "longitude_deg": 75.7339,
+      "latitude_deg": 9.5294,
+      "strength": 0.85753
+    },
+    {
+      "longitude_deg": -52.4853,
+      "latitude_deg": -55.4118,
+      "strength": 0.84663
+    },
+    {
+      "longitude_deg": -38.3953,
+      "latitude_deg": 80.8235,
+      "strength": 0.18
+    },
+    {
+      "longitude_deg": 5.2838,
+      "latitude_deg": 75.8824,
+      "strength": 0.18
+    },
+    {
+      "longitude_deg": 22.8963,
+      "latitude_deg": 75.8824,
+      "strength": 0.18
+    },
+    {
+      "longitude_deg": 172.955,
+      "latitude_deg": 58.2353,
+      "strength": 0.18
+    },
+    {
+      "longitude_deg": -10.9198,
+      "latitude_deg": 57.5294,
+      "strength": 0.18
+    }
+  ],
+  "volatile_emitters": [
+    {
+      "longitude_deg": -139.8434,
+      "latitude_deg": 40.5882,
+      "strength": 0.66
+    },
+    {
+      "longitude_deg": -34.8728,
+      "latitude_deg": 3.8824,
+      "strength": 0.66
+    },
+    {
+      "longitude_deg": -9.5108,
+      "latitude_deg": -9.5294,
+      "strength": 0.66
+    },
+    {
+      "longitude_deg": -131.3894,
+      "latitude_deg": -28.5882,
+      "strength": 0.66
+    },
+    {
+      "longitude_deg": 169.4325,
+      "latitude_deg": -28.5882,
+      "strength": 0.66
+    },
+    {
+      "longitude_deg": -165.2055,
+      "latitude_deg": 85.0588,
+      "strength": 0.58
+    },
+    {
+      "longitude_deg": -111.6634,
+      "latitude_deg": 84.3529,
+      "strength": 0.58
+    },
+    {
+      "longitude_deg": 22.8963,
+      "latitude_deg": 84.3529,
+      "strength": 0.58
+    },
+    {
+      "longitude_deg": 146.8885,
+      "latitude_deg": 83.6471,
+      "strength": 0.58
+    },
+    {
+      "longitude_deg": -37.6908,
+      "latitude_deg": 82.2353,
+      "strength": 0.58
+    },
+    {
+      "longitude_deg": 51.0763,
+      "latitude_deg": 82.2353,
+      "strength": 0.58
+    },
+    {
+      "longitude_deg": -8.1018,
+      "latitude_deg": 70.9412,
+      "strength": 0.58
+    }
+  ],
+  "moisture_sources": [
+    {
+      "longitude_deg": 46.8493,
+      "latitude_deg": -53.2941,
+      "strength": 0.93257
+    },
+    {
+      "longitude_deg": 5.9883,
+      "latitude_deg": 70.9412,
+      "strength": 0.9117
+    },
+    {
+      "longitude_deg": 11.6243,
+      "latitude_deg": 51.1765,
+      "strength": 0.90079
+    },
+    {
+      "longitude_deg": -67.2798,
+      "latitude_deg": 54.7059,
+      "strength": 0.90044
+    },
+    {
+      "longitude_deg": 27.1233,
+      "latitude_deg": -49.7647,
+      "strength": 0.89986
+    },
+    {
+      "longitude_deg": -25.7143,
+      "latitude_deg": 51.1765,
+      "strength": 0.89953
+    },
+    {
+      "longitude_deg": 131.3894,
+      "latitude_deg": -40.5882,
+      "strength": 0.88813
+    },
+    {
+      "longitude_deg": 147.593,
+      "latitude_deg": -75.1765,
+      "strength": 0.88516
+    },
+    {
+      "longitude_deg": 97.5734,
+      "latitude_deg": -70.9412,
+      "strength": 0.88178
+    },
+    {
+      "longitude_deg": 41.9178,
+      "latitude_deg": -20.1176,
+      "strength": 0.87976
+    },
+    {
+      "longitude_deg": -24.3053,
+      "latitude_deg": -63.1765,
+      "strength": 0.87881
+    },
+    {
+      "longitude_deg": 180.0,
+      "latitude_deg": -72.3529,
+      "strength": 0.87483
+    }
+  ]
+}

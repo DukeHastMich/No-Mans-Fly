@@ -1,0 +1,178 @@
+{
+  "schema_version": "2.0",
+  "id": "gas_giant",
+  "display_name": "Gas Giant",
+  "category": "gas_giant",
+  "projection": "equirectangular",
+  "texture_resolution": {
+    "width": 512,
+    "height": 256
+  },
+  "mesh": {
+    "cloud": "meshes/cloud_shell_lod1.obj",
+    "atmosphere": "meshes/atmosphere_shell_lod1.obj"
+  },
+  "maps": {
+    "albedo": {
+      "file": "textures/albedo.png",
+      "encoding": "sRGB"
+    },
+    "elevation": {
+      "file": "textures/elevation_16bit.png",
+      "encoding": "uint16",
+      "datum_code": 32768,
+      "physical_range_km": [
+        -40.0,
+        40.0
+      ],
+      "semantics": "relative_cloud_top_height"
+    },
+    "roughness": {
+      "file": "textures/roughness.png",
+      "encoding": "uint8_normalized"
+    },
+    "material_id": {
+      "file": "textures/material_id.png",
+      "encoding": "uint8_categorical"
+    },
+    "normal": {
+      "file": "textures/normal.png",
+      "encoding": "RGB height-derived normal"
+    },
+    "spectral_reflectance": {
+      "file": "spectral/reflectance_330_600nm.npz",
+      "encoding": "float16_normalized",
+      "wavelength_nm": [
+        330.0,
+        345.0,
+        355.0,
+        375.0,
+        405.0,
+        437.0,
+        478.0,
+        508.0,
+        550.0,
+        600.0
+      ]
+    },
+    "uv_345nm": {
+      "file": "spectral/uv_reflectance_345nm_16bit.png",
+      "encoding": "uint16_normalized"
+    },
+    "moisture_source": {
+      "file": "environment/moisture_source.png",
+      "encoding": "uint8_normalized_source_strength"
+    },
+    "volatile_emission_source": {
+      "file": "environment/volatile_emission_source.png",
+      "encoding": "uint8_normalized_source_strength"
+    },
+    "food_density": {
+      "file": "environment/food_density.png",
+      "encoding": "uint8_normalized_resource_density"
+    },
+    "mineral_resource_density": {
+      "file": "environment/mineral_resource_density.png",
+      "encoding": "uint8_normalized_resource_density"
+    },
+    "temperature_bias": {
+      "file": "environment/temperature_bias.npy",
+      "encoding": "float32_relative_field"
+    }
+  },
+  "materials": {
+    "0": {
+      "name": "mid_cloud_zone",
+      "base_rgb": [
+        196,
+        166,
+        124
+      ],
+      "roughness": 0.5,
+      "spectral_basis": "storm_cloud"
+    },
+    "1": {
+      "name": "dark_cloud_belt",
+      "base_rgb": [
+        116,
+        78,
+        58
+      ],
+      "roughness": 0.72,
+      "spectral_basis": "dark_cloud"
+    },
+    "2": {
+      "name": "bright_cloud_zone",
+      "base_rgb": [
+        226,
+        216,
+        191
+      ],
+      "roughness": 0.42,
+      "spectral_basis": "bright_cloud"
+    },
+    "3": {
+      "name": "storm_cell",
+      "base_rgb": [
+        184,
+        116,
+        62
+      ],
+      "roughness": 0.86,
+      "spectral_basis": "storm_cloud"
+    },
+    "4": {
+      "name": "polar_haze",
+      "base_rgb": [
+        162,
+        157,
+        150
+      ],
+      "roughness": 0.58,
+      "spectral_basis": "bright_cloud"
+    }
+  },
+  "atmosphere": {
+    "class": "deep_gaseous_envelope",
+    "pressure_kpa": null,
+    "components": {
+      "H2": 0.89,
+      "He": 0.1,
+      "CH4": 0.01
+    }
+  },
+  "contact_physics": {
+    "landing_allowed": false,
+    "model": "atmospheric_layers",
+    "collision_mesh": null
+  },
+  "instance_contract": {
+    "store_per_planet": [
+      "template_id",
+      "radius",
+      "rotation",
+      "palette",
+      "environmental_variations"
+    ],
+    "palette_affects": [
+      "human_albedo",
+      "spectral_reflectance"
+    ],
+    "environmental_variations_affect": [
+      "temperature",
+      "moisture",
+      "volatile_emission",
+      "resource_density"
+    ],
+    "geometry_rule": "When elevation is enabled, viewer hits, fly retinal hits, and contact/collision must use the same UV and radial heightfield."
+  },
+  "sensory_contract": {
+    "composition_is_not_neural_input": true,
+    "volatile_map_is_source_emission_not_antenna_signal": true,
+    "moisture_map_is_environment_source_not_hygroreceptor_signal": true,
+    "food_map_is_resource_availability_not_feeding_command": true,
+    "spectral_reflectance_feeds_photon_model_before_opsins": true
+  },
+  "resource_points": "environment/resource_points.json",
+  "notes": "Spectral curves are deterministic engineering approximations for coherent simulation behavior, not laboratory-measured spectra."
+}

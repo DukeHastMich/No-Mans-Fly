@@ -1,0 +1,52 @@
+{
+  "pack_id": "no_mans_fly_worldpack_v2",
+  "version": "2.0",
+  "template_count": 6,
+  "texture_resolution": [
+    512,
+    256
+  ],
+  "wavelength_nm": [
+    330.0,
+    345.0,
+    355.0,
+    375.0,
+    405.0,
+    437.0,
+    478.0,
+    508.0,
+    550.0,
+    600.0
+  ],
+  "templates": [
+    {
+      "id": "earthlike_rocky",
+      "metadata": "templates/earthlike_rocky/earthlike_rocky.json"
+    },
+    {
+      "id": "marslike_rocky",
+      "metadata": "templates/marslike_rocky/marslike_rocky.json"
+    },
+    {
+      "id": "moonlike_rocky",
+      "metadata": "templates/moonlike_rocky/moonlike_rocky.json"
+    },
+    {
+      "id": "gas_giant",
+      "metadata": "templates/gas_giant/gas_giant.json"
+    },
+    {
+      "id": "trans_neptunian",
+      "metadata": "templates/trans_neptunian/trans_neptunian.json"
+    },
+    {
+      "id": "rocky_vi_the_voyage_home",
+      "metadata": "templates/rocky_vi_the_voyage_home/rocky_vi_the_voyage_home.json"
+    }
+  ],
+  "shared_meshes": [
+    "shared_meshes/unit_sphere_lod0.obj",
+    "shared_meshes/unit_sphere_lod1.obj",
+    "shared_meshes/unit_sphere_lod2.obj"
+  ]
+}

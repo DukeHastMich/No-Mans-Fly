@@ -1,0 +1,128 @@
+{
+  "food": [],
+  "minerals": [],
+  "volatile_emitters": [
+    {
+      "longitude_deg": 32.7593,
+      "latitude_deg": 63.8824,
+      "strength": 0.65
+    },
+    {
+      "longitude_deg": 129.9804,
+      "latitude_deg": 62.4706,
+      "strength": 0.65
+    },
+    {
+      "longitude_deg": 52.4853,
+      "latitude_deg": 60.3529,
+      "strength": 0.65
+    },
+    {
+      "longitude_deg": 70.8023,
+      "latitude_deg": 52.5882,
+      "strength": 0.65
+    },
+    {
+      "longitude_deg": 90.5284,
+      "latitude_deg": 51.8824,
+      "strength": 0.65
+    },
+    {
+      "longitude_deg": 25.0098,
+      "latitude_deg": 45.5294,
+      "strength": 0.65
+    },
+    {
+      "longitude_deg": 159.5695,
+      "latitude_deg": 39.1765,
+      "strength": 0.65
+    },
+    {
+      "longitude_deg": 179.2955,
+      "latitude_deg": 37.7647,
+      "strength": 0.65
+    },
+    {
+      "longitude_deg": -108.8454,
+      "latitude_deg": 34.9412,
+      "strength": 0.65
+    },
+    {
+      "longitude_deg": -56.7123,
+      "latitude_deg": 33.5294,
+      "strength": 0.65
+    },
+    {
+      "longitude_deg": -89.1194,
+      "latitude_deg": 32.1176,
+      "strength": 0.65
+    },
+    {
+      "longitude_deg": -36.9863,
+      "latitude_deg": 31.4118,
+      "strength": 0.65
+    }
+  ],
+  "moisture_sources": [
+    {
+      "longitude_deg": -47.5538,
+      "latitude_deg": -6.7059,
+      "strength": 0.89992
+    },
+    {
+      "longitude_deg": -51.0763,
+      "latitude_deg": 24.3529,
+      "strength": 0.89986
+    },
+    {
+      "longitude_deg": 77.8474,
+      "latitude_deg": 48.3529,
+      "strength": 0.89975
+    },
+    {
+      "longitude_deg": 132.0939,
+      "latitude_deg": 54.0,
+      "strength": 0.89971
+    },
+    {
+      "longitude_deg": 9.5108,
+      "latitude_deg": -56.8235,
+      "strength": 0.89961
+    },
+    {
+      "longitude_deg": 82.7789,
+      "latitude_deg": 8.8235,
+      "strength": 0.8996
+    },
+    {
+      "longitude_deg": 36.2818,
+      "latitude_deg": 55.4118,
+      "strength": 0.89958
+    },
+    {
+      "longitude_deg": -107.4364,
+      "latitude_deg": -34.2353,
+      "strength": 0.89953
+    },
+    {
+      "longitude_deg": 94.7554,
+      "latitude_deg": -37.0588,
+      "strength": 0.8995
+    },
+    {
+      "longitude_deg": 27.1233,
+      "latitude_deg": -8.8235,
+      "strength": 0.8994
+    },
+    {
+      "longitude_deg": -102.5049,
+      "latitude_deg": 30.0,
+      "strength": 0.89912
+    },
+    {
+      "longitude_deg": 165.91,
+      "latitude_deg": -57.5294,
+      "strength": 0.89816
+    }
+  ]
+}

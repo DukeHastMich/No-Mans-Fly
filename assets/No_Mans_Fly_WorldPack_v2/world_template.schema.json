@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "No Man's Fly World Template",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "category",
+    "maps",
+    "contact_physics",
+    "sensory_contract",
+    "instance_contract"
+  ]
+}

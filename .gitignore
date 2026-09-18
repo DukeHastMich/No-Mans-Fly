@@ -1,0 +1,30 @@
+# Local Python environment and generated caches
+.venv/
+__pycache__/
+*.py[cod]
+*.nbc
+*.nbi
+
+# Persistent organisms, checkpoints, and archived development files
+Runs/
+Historical/
+
+# Downloaded graph sources and large generated brain data
+source/
+*.npz
+*.npz.*
+*.npy
+*.feather
+
+# Machine-local validation and incomplete writes
+data/.specimen003-runtime-validation.json
+*.tmp
+*.part
+
+# Keep source code, splash assets, and the small optic-column workbook publishable.
+
+# Required small world-pack numeric assets (not organism/brain data).
+!assets/No_Mans_Fly_WorldPack_v2/templates/*/spectral/reflectance_330_600nm.npz
+!assets/No_Mans_Fly_WorldPack_v2/templates/*/environment/temperature_bias.npy
+# Redundant distribution archive; the extracted pack is the runtime source.
+assets/No_Mans_Fly_WorldPack_v2.zip

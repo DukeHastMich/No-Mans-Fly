@@ -1,0 +1,190 @@
+{
+  "schema_version": "2.0",
+  "id": "marslike_rocky",
+  "display_name": "Marslike Rocky",
+  "category": "rocky_arid",
+  "projection": "equirectangular",
+  "texture_resolution": {
+    "width": 512,
+    "height": 256
+  },
+  "mesh": {
+    "render": "meshes/surface_lod1.obj",
+    "collision": "meshes/collision_lod0.obj",
+    "shared_lod2": "../../shared_meshes/unit_sphere_lod2.obj"
+  },
+  "maps": {
+    "albedo": {
+      "file": "textures/albedo.png",
+      "encoding": "sRGB"
+    },
+    "elevation": {
+      "file": "textures/elevation_16bit.png",
+      "encoding": "uint16",
+      "datum_code": 32768,
+      "physical_range_km": [
+        -7.5,
+        11.0
+      ],
+      "semantics": "radial_surface_displacement"
+    },
+    "roughness": {
+      "file": "textures/roughness.png",
+      "encoding": "uint8_normalized"
+    },
+    "material_id": {
+      "file": "textures/material_id.png",
+      "encoding": "uint8_categorical"
+    },
+    "normal": {
+      "file": "textures/normal.png",
+      "encoding": "RGB height-derived normal"
+    },
+    "spectral_reflectance": {
+      "file": "spectral/reflectance_330_600nm.npz",
+      "encoding": "float16_normalized",
+      "wavelength_nm": [
+        330.0,
+        345.0,
+        355.0,
+        375.0,
+        405.0,
+        437.0,
+        478.0,
+        508.0,
+        550.0,
+        600.0
+      ]
+    },
+    "uv_345nm": {
+      "file": "spectral/uv_reflectance_345nm_16bit.png",
+      "encoding": "uint16_normalized"
+    },
+    "moisture_source": {
+      "file": "environment/moisture_source.png",
+      "encoding": "uint8_normalized_source_strength"
+    },
+    "volatile_emission_source": {
+      "file": "environment/volatile_emission_source.png",
+      "encoding": "uint8_normalized_source_strength"
+    },
+    "food_density": {
+      "file": "environment/food_density.png",
+      "encoding": "uint8_normalized_resource_density"
+    },
+    "mineral_resource_density": {
+      "file": "environment/mineral_resource_density.png",
+      "encoding": "uint8_normalized_resource_density"
+    },
+    "temperature_bias": {
+      "file": "environment/temperature_bias.npy",
+      "encoding": "float32_relative_field"
+    }
+  },
+  "materials": {
+    "0": {
+      "name": "iron_dust_plain",
+      "base_rgb": [
+        183,
+        91,
+        50
+      ],
+      "roughness": 0.68,
+      "spectral_basis": "dust"
+    },
+    "1": {
+      "name": "dark_basalt",
+      "base_rgb": [
+        83,
+        63,
+        57
+      ],
+      "roughness": 0.82,
+      "spectral_basis": "basalt"
+    },
+    "2": {
+      "name": "exposed_rock_highland",
+      "base_rgb": [
+        142,
+        92,
+        66
+      ],
+      "roughness": 0.89,
+      "spectral_basis": "rock"
+    },
+    "3": {
+      "name": "canyon_wall_floor",
+      "base_rgb": [
+        107,
+        62,
+        46
+      ],
+      "roughness": 0.86,
+      "spectral_basis": "rock"
+    },
+    "4": {
+      "name": "polar_frost",
+      "base_rgb": [
+        216,
+        206,
+        195
+      ],
+      "roughness": 0.38,
+      "spectral_basis": "frost"
+    },
+    "5": {
+      "name": "mineral_outcrop",
+      "base_rgb": [
+        120,
+        78,
+        96
+      ],
+      "roughness": 0.8,
+      "spectral_basis": "mineral"
+    }
+  },
+  "atmosphere": {
+    "class": "thin_cold_CO2",
+    "pressure_kpa": 0.6,
+    "components": {
+      "CO2": 0.95,
+      "N2": 0.027,
+      "Ar": 0.016
+    }
+  },
+  "contact_physics": {
+    "landing_allowed": true,
+    "model": "radial_heightfield",
+    "collision_mesh": "meshes/collision_lod0.obj",
+    "elevation_map": "textures/elevation_16bit.png"
+  },
+  "instance_contract": {
+    "store_per_planet": [
+      "template_id",
+      "radius",
+      "rotation",
+      "palette",
+      "environmental_variations"
+    ],
+    "palette_affects": [
+      "human_albedo",
+      "spectral_reflectance"
+    ],
+    "environmental_variations_affect": [
+      "temperature",
+      "moisture",
+      "volatile_emission",
+      "resource_density"
+    ],
+    "geometry_rule": "When elevation is enabled, viewer hits, fly retinal hits, and contact/collision must use the same UV and radial heightfield."
+  },
+  "sensory_contract": {
+    "composition_is_not_neural_input": true,
+    "volatile_map_is_source_emission_not_antenna_signal": true,
+    "moisture_map_is_environment_source_not_hygroreceptor_signal": true,
+    "food_map_is_resource_availability_not_feeding_command": true,
+    "spectral_reflectance_feeds_photon_model_before_opsins": true
+  },
+  "resource_points": "environment/resource_points.json",
+  "notes": "Spectral curves are deterministic engineering approximations for coherent simulation behavior, not laboratory-measured spectra."
+}

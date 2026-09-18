@@ -1,0 +1,87 @@
+{
+  "food": [],
+  "minerals": [
+    {
+      "longitude_deg": -101.8004,
+      "latitude_deg": 60.3529,
+      "strength": 0.97535
+    },
+    {
+      "longitude_deg": 87.0059,
+      "latitude_deg": 52.5882,
+      "strength": 0.95415
+    },
+    {
+      "longitude_deg": -74.3249,
+      "latitude_deg": -18.7059,
+      "strength": 0.94083
+    },
+    {
+      "longitude_deg": 150.411,
+      "latitude_deg": 71.6471,
+      "strength": 0.93605
+    },
+    {
+      "longitude_deg": -129.2759,
+      "latitude_deg": 1.7647,
+      "strength": 0.92971
+    },
+    {
+      "longitude_deg": 46.8493,
+      "latitude_deg": -41.2941,
+      "strength": 0.91933
+    },
+    {
+      "longitude_deg": -45.4403,
+      "latitude_deg": 6.7059,
+      "strength": 0.9081
+    },
+    {
+      "longitude_deg": -108.1409,
+      "latitude_deg": -10.9412,
+      "strength": 0.90691
+    },
+    {
+      "longitude_deg": 131.3894,
+      "latitude_deg": 67.4118,
+      "strength": 0.90359
+    },
+    {
+      "longitude_deg": -144.0705,
+      "latitude_deg": -70.9412,
+      "strength": 0.90228
+    },
+    {
+      "longitude_deg": 157.456,
+      "latitude_deg": 56.1176,
+      "strength": 0.88184
+    },
+    {
+      "longitude_deg": 149.7065,
+      "latitude_deg": -61.0588,
+      "strength": 0.88042
+    },
+    {
+      "longitude_deg": -58.8258,
+      "latitude_deg": 49.7647,
+      "strength": 0.86846
+    },
+    {
+      "longitude_deg": -168.728,
+      "latitude_deg": -1.0588,
+      "strength": 0.86348
+    },
+    {
+      "longitude_deg": -145.4795,
+      "latitude_deg": 71.6471,
+      "strength": 0.85379
+    },
+    {
+      "longitude_deg": 101.0959,
+      "latitude_deg": 77.2941,
+      "strength": 0.12
+    }
+  ],
+  "volatile_emitters": [],
+  "moisture_sources": []
+}

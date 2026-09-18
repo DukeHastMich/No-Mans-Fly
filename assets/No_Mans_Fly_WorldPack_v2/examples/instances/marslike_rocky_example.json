@@ -1,0 +1,39 @@
+{
+  "template_id": "marslike_rocky",
+  "radius": 1.0,
+  "rotation": {
+    "axis": [
+      0,
+      0,
+      1
+    ],
+    "degrees": 0.0
+  },
+  "palette": {
+    "variant": "default",
+    "rgb_multiplier": [
+      1,
+      1,
+      1
+    ],
+    "spectral_multiplier": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "environmental_variations": {
+    "seed": 0,
+    "temperature_scale": 1.0,
+    "moisture_scale": 1.0,
+    "volatile_scale": 1.0,
+    "food_scale": 1.0
+  }
+}

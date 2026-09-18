@@ -1,0 +1,254 @@
+{
+  "texture_resolution": [
+    512,
+    256
+  ],
+  "wavelength_nm": [
+    330.0,
+    345.0,
+    355.0,
+    375.0,
+    405.0,
+    437.0,
+    478.0,
+    508.0,
+    550.0,
+    600.0
+  ],
+  "templates": {
+    "earthlike_rocky": {
+      "spectral_shape": [
+        256,
+        512,
+        10
+      ],
+      "spectral_range": [
+        0.024541718885302544,
+        0.9156073331832886
+      ],
+      "elevation_range_normalized": [
+        -1.0,
+        1.0
+      ],
+      "roughness_range": [
+        0.11722293845646617,
+        0.9274340898666221
+      ],
+      "longitude_seam_mean_abs_error": {
+        "albedo": 0.002988116117194295,
+        "elevation": 0.010759759837951695
+      },
+      "mesh_stats": {
+        "surface_lod1": {
+          "vertices": 2145,
+          "triangles": 3968
+        },
+        "collision_lod0": {
+          "vertices": 561,
+          "triangles": 960
+        }
+      },
+      "resource_points_counts": {
+        "food": 16,
+        "minerals": 6,
+        "volatile_emitters": 12,
+        "moisture_sources": 12
+      }
+    },
+    "marslike_rocky": {
+      "spectral_shape": [
+        256,
+        512,
+        10
+      ],
+      "spectral_range": [
+        0.071190245449543,
+        0.8351728916168213
+      ],
+      "elevation_range_normalized": [
+        -0.65,
+        0.65
+      ],
+      "roughness_range": [
+        0.3287415584714385,
+        0.9458392099712934
+      ],
+      "longitude_seam_mean_abs_error": {
+        "albedo": 0.0206268522888422,
+        "elevation": 0.019437893213960063
+      },
+      "mesh_stats": {
+        "surface_lod1": {
+          "vertices": 2145,
+          "triangles": 3968
+        },
+        "collision_lod0": {
+          "vertices": 561,
+          "triangles": 960
+        }
+      },
+      "resource_points_counts": {
+        "food": 0,
+        "minerals": 13,
+        "volatile_emitters": 11,
+        "moisture_sources": 12
+      }
+    },
+    "moonlike_rocky": {
+      "spectral_shape": [
+        256,
+        512,
+        10
+      ],
+      "spectral_range": [
+        0.05871093273162842,
+        0.6419844627380371
+      ],
+      "elevation_range_normalized": [
+        -0.3445541804352309,
+        0.3544340714106688
+      ],
+      "roughness_range": [
+        0.5754910308401582,
+        0.9127479395595961
+      ],
+      "longitude_seam_mean_abs_error": {
+        "albedo": 0.002916663186624646,
+        "elevation": 0.005090114794784471
+      },
+      "mesh_stats": {
+        "surface_lod1": {
+          "vertices": 2145,
+          "triangles": 3968
+        },
+        "collision_lod0": {
+          "vertices": 561,
+          "triangles": 960
+        }
+      },
+      "resource_points_counts": {
+        "food": 0,
+        "minerals": 16,
+        "volatile_emitters": 0,
+        "moisture_sources": 0
+      }
+    },
+    "gas_giant": {
+      "spectral_shape": [
+        256,
+        512,
+        10
+      ],
+      "spectral_range": [
+        0.12800000607967377,
+        0.9502658247947693
+      ],
+      "elevation_range_normalized": [
+        -0.36895428875718767,
+        0.837806411228026
+      ],
+      "roughness_range": [
+        0.35096379531772387,
+        0.9300000143051148
+      ],
+      "longitude_seam_mean_abs_error": {
+        "albedo": 0.1401180773973465,
+        "elevation": 0.24382860698040815
+      },
+      "mesh_stats": {
+        "cloud_shell": {
+          "vertices": 2145,
+          "triangles": 3968
+        },
+        "atmosphere_shell": {
+          "vertices": 2145,
+          "triangles": 3968
+        }
+      },
+      "resource_points_counts": {
+        "food": 0,
+        "minerals": 0,
+        "volatile_emitters": 12,
+        "moisture_sources": 12
+      }
+    },
+    "trans_neptunian": {
+      "spectral_shape": [
+        256,
+        512,
+        10
+      ],
+      "spectral_range": [
+        0.024969452992081642,
+        0.9429999589920044
+      ],
+      "elevation_range_normalized": [
+        -0.4201073147345872,
+        0.40328429249389114
+      ],
+      "roughness_range": [
+        0.2100000011920929,
+        0.9800000262260438
+      ],
+      "longitude_seam_mean_abs_error": {
+        "albedo": 0.08731629699468613,
+        "elevation": 0.004621249495793537
+      },
+      "mesh_stats": {
+        "surface_lod1": {
+          "vertices": 2145,
+          "triangles": 3968
+        },
+        "collision_lod0": {
+          "vertices": 561,
+          "triangles": 960
+        }
+      },
+      "resource_points_counts": {
+        "food": 0,
+        "minerals": 16,
+        "volatile_emitters": 12,
+        "moisture_sources": 12
+      }
+    },
+    "rocky_vi_the_voyage_home": {
+      "spectral_shape": [
+        256,
+        512,
+        10
+      ],
+      "spectral_range": [
+        0.025587918236851692,
+        0.7799205780029297
+      ],
+      "elevation_range_normalized": [
+        -0.9999999981824429,
+        0.9871463557863274
+      ],
+      "roughness_range": [
+        0.17117224727018754,
+        0.9642264961150445
+      ],
+      "longitude_seam_mean_abs_error": {
+        "albedo": 0.005629980470985174,
+        "elevation": 0.010367986275882922
+      },
+      "mesh_stats": {
+        "surface_lod1": {
+          "vertices": 2145,
+          "triangles": 3968
+        },
+        "collision_lod0": {
+          "vertices": 561,
+          "triangles": 960
+        }
+      },
+      "resource_points_counts": {
+        "food": 16,
+        "minerals": 16,
+        "volatile_emitters": 12,
+        "moisture_sources": 12
+      }
+    }
+  }
+}
