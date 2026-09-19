@@ -277,13 +277,10 @@ class Specimen003Experiment:
         drives.extend(planetary_drives)
         # Body-state feedback is from the previous expressed motor frame. It carries
         # no target or reward semantics; it tells retained mechanosensory populations
-        # what the animal actually did.  Food/resource volatiles and the weaker
-        # world-scale ambient field superpose as one physical local antenna carrier.
-        food_flow=np.asarray(food_pre.get("volatile_flow_body",[0.0,0.0,0.0]),dtype=float)
-        world_flow=np.asarray(planetary_pre.get("world_carrier_flow_body",[0.0,0.0,0.0]),dtype=float)
-        ambient_flow=food_flow+world_flow
-        amag=float(np.linalg.norm(ambient_flow))
-        if amag>1.0:ambient_flow/=amag
+        # what the animal actually did. Odor cues remain in the chemical pathways.
+        # Odor gradients are concentration fields, not air velocity. They continue
+        # to drive ORNs, but cannot bend an antenna without modeled carrier motion.
+        ambient_flow=np.zeros(3,dtype=float)
         drives.extend(self.proprio.drives(self.body,self.last_motor,
                                          ambient_flow_body=ambient_flow,dt_s=dt))
         # Environmental/body drive is restricted to anatomically sensory populations.
@@ -310,7 +307,11 @@ class Specimen003Experiment:
         motor_energy_scale=self.homeostasis.motor_power_scale()
         self.body.advance_living(self.universe,motor.force_body,motor.torque_body,dt,
                                  flight_command=motor.flight_command,walking_command=motor.walking_command,
-                                 motor_power_scale=motor_energy_scale)
+                                 motor_power_scale=motor_energy_scale,
+                                 flight_force_body=motor.flight_force_body,
+                                 contact_force_body=motor.contact_force_body,
+                                 flight_torque_body=motor.flight_torque_body,
+                                 contact_torque_body=motor.contact_torque_body)
         # 4) Re-observe contact after motion. Feeding only succeeds if real motor output
         # expresses a feeding command while a nutrient patch is actually under the fly.
         _,food_post=self.food.observe(self.universe,self.body,motor)

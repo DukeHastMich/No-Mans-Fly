@@ -4,7 +4,7 @@ The connectome is not a complete sensory or muscle model. Neuron identities and 
 
 ## Implemented corrections
 
-- Leg movement, hair-plate and chordotonal feedback now use ProLN/MesoLN/MetaLN annotations to distinguish fore-, middle- and hind-leg pairs. Explicit side/instance annotations preserve left/right. Unknown sides remain pooled within their known pair; unknown nerves retain the previous generic approximation.
+- Leg movement, hair-plate and chordotonal feedback now use ProLN/MesoLN/MetaLN annotations to distinguish fore-, middle- and hind-leg pairs. Explicit side/instance annotations preserve left/right. Unknown sides remain pooled within their known pair; receptors outside the recognized leg nerves no longer receive generic all-leg movement.
 - Chordotonal movement magnitude now accounts for elapsed simulation time. Switching from 100-ms windows to shorter slices no longer weakens the same physical movement merely because it is sampled more often. Transfer gains remain engineering approximations.
 - Proprioceptive movement/contact history survives checkpoints and structural growth. Legacy saves initialize missing history from restored body/motor state without inventing a movement or contact-onset event.
 - Retinal adaptation, previous facet responses, microsaccade state and sensory time survive checkpoints and compatible structural growth.
@@ -25,7 +25,7 @@ The connectome is not a complete sensory or muscle model. Neuron identities and 
 | Halteres | Flight-gated angular-speed envelope with roll/yaw bias | Signed pitch coding, receptor-specific direction, high-rate oscillation/phase and strain mechanics |
 | Hearing/vibration | JO-A/B identified but deliberately silent | Acoustic field, passive receiver vibration dynamics and high-rate neural delivery |
 | Wing strain | Coarse load/activity envelopes | Individual wing-hinge/strain field mapping and wingbeat phase |
-| Flight pitch actuation | No direct airborne pitch torque in current motor decoder | b1/b2 phase/activity-to-wing-kinematics mapping and force/moment model |
+| Flight pitch actuation | Reduced b1/b2-driven pitch; unsupported b3 coupling removed | Validated bidirectional phase/activity-to-wing-kinematics mapping and force/moment model |
 
 ## Evidence limits
 
@@ -45,3 +45,7 @@ The peripheral nerve annotations distinguish leg pairs, which supports the routi
 Tests cover leg-pair/side isolation, movement-rate consistency across time steps, sensory history round trips, legacy resume behavior, and an isolated 166,700-neuron GPU run with save/resume and hidden GUI rendering. These validate implementation consistency, not biological equivalence or learned landing behavior. Live organism checkpoints and the immutable seed are not modified by development tests.
 
 The next substantial flight improvement requires an explicit configurable physical model for antenna/haltere geometry and wing-hinge mechanics, with provenance and uncertainty for every unmeasured parameter. A complete set of senses remains unfinished.
+
+## September 18 system audit
+
+See [the system-by-system research audit](EMBODIMENT_AUDIT.md) for current evidence, routing corrections, diagnostic failures and acceptance criteria. Explicit JO-C/E selection now spans both coarse JO categories. Unknown leg motor directions no longer default to positive movement. These repairs do not establish complete sensory or motor fidelity.

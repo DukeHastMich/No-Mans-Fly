@@ -62,14 +62,17 @@ class ProprioceptiveBridge:
         tu=np.char.upper(typ)
         aud=self.groups["auditory"]
         wg=self.groups["wind_gravity"]
-        self.jo_ab=aud[np.char.startswith(tu[aud],"JO-A") | np.char.startswith(tu[aud],"JO-B")]
+        # Coarse subclass labels overlap functional JO types in this release.
+        # Classify the union by explicit subgroup identity, not subclass alone.
+        alljo=np.unique(np.concatenate([aud,wg])).astype(np.int32)
+        self.jo_ab=alljo[np.char.startswith(tu[alljo],"JO-A") | np.char.startswith(tu[alljo],"JO-B")]
         # JO-C and JO-E are opponent static-deflection channels, not one pooled
         # "wind/gravity magnitude" population.  C is preferentially activated by
         # anterior/pull deflection of the receiver; E by posterior/push deflection.
         # Keep the populations separate so a single physical deflection cannot excite
         # both opponent channels at once.
-        self.jo_c=wg[np.char.startswith(tu[wg],"JO-C")]
-        self.jo_e=wg[np.char.startswith(tu[wg],"JO-E")]
+        self.jo_c=alljo[np.char.startswith(tu[alljo],"JO-C")]
+        self.jo_e=alljo[np.char.startswith(tu[alljo],"JO-E")]
         self.jo_ce=np.unique(np.concatenate([self.jo_c,self.jo_e])).astype(np.int32) if (len(self.jo_c) or len(self.jo_e)) else np.empty(0,dtype=np.int32)
         known=np.concatenate([self.jo_ab,self.jo_ce]) if (len(self.jo_ab) or len(self.jo_ce)) else np.empty(0,dtype=np.int32)
         alljo=np.unique(np.concatenate([aud,wg])).astype(np.int32) if (len(aud) or len(wg)) else np.empty(0,dtype=np.int32)
@@ -84,6 +87,10 @@ class ProprioceptiveBridge:
         # stays unpaired rather than assigning a side by neuron ID.
         nerve=np.asarray(getattr(core,'entry_nerve',np.full(len(sc),'')),dtype=str)
         self.leg_segments={}
+        self.strain_segments={name:self._split(self.groups['campaniform sensilla'][
+            np.isin(nerve[self.groups['campaniform sensilla']],nerves)])
+            for name,nerves in {'wing':['ADMN'],'haltere':['DMetaN'],
+                               'leg':['ProLN','MesoLN','MetaLN']}.items()}
         for name in ('leg','hair plate','chordotonal organ'):
             ids=self.groups[name]
             parts=[]
@@ -201,7 +208,10 @@ class ProprioceptiveBridge:
         self._add_bilateral(out,self._split(self.groups["mechanosensory bristle"]),26.0*tactile,
                             math.tanh(float(vel_body[1])/1.5) if airspeed else 0.0)
 
-        wing_load=float(np.clip(np.linalg.norm(force)/0.08,0,1))
+        # Only aerodynamic force belongs in the wing envelope. Old frames with no
+        # decomposition use wing power alone, never the mixed leg/body force.
+        wing_force=getattr(motor_frame,'flight_force_body',None)
+        wing_load=float(np.clip(np.linalg.norm(wing_force)/0.08,0,1)) if wing_force is not None else flight
         self._add_bilateral(out,self._split(self.groups["wing bristle"]),24.0*flight+18.0*wing_load,
                             math.tanh(omega[0]/0.18))
         self._add_bilateral(out,self._split(self.groups["wing"]),18.0*flight+14.0*wing_load,
@@ -209,9 +219,12 @@ class ProprioceptiveBridge:
 
         # Strain/load receptors.
         support=1.0 if on_surface else 0.0
-        load=float(np.clip(0.50*support+0.65*wing_load,0,1))
-        self._add_bilateral(out,self._split(self.groups["campaniform sensilla"]),38.0*load,
-                            math.tanh(force[1]/0.025) if len(force) else 0.0)
+        # Organ-local envelopes remain reduced transduction models. Ground support
+        # cannot load haltere/wing sensilla; wing force cannot load leg sensilla.
+        self._add_bilateral(out,self.strain_segments['wing'],38.0*0.65*wing_load)
+        self._add_bilateral(out,self.strain_segments['leg'],38.0*0.50*support)
+        self._add_bilateral(out,self.strain_segments['haltere'],haltere_base,
+                            math.tanh((omega[0]+0.65*omega[2])/0.20) if omag else 0.0)
 
         # Limb proprioception uses the expressed leg effectors.  Crucially, the graph's
         # 'leg bristle' subclass is gustatory (LgLG/LgAG types) and is not touched here.
@@ -225,7 +238,8 @@ class ProprioceptiveBridge:
                 lv=float(values[2*pair]);rv=float(values[2*pair+1])
                 for ids,value in ((left,lv),(right,rv),(unpaired,.5*(lv+rv))):
                     if len(ids):out.append((ids,_clip_hz(gain*value)))
-            self._add_bilateral(out,unknown,gain*float(np.mean(values)))
+            # An unlocalized receptor must not receive all-leg motion by default.
+            # These cells remain in the graph/census pending an anatomical mapping.
         segment_feedback('leg',np.abs(leg),26.0*(1.0 if on_surface else 0.35))
         segment_feedback('hair plate',np.abs(leg),22.0)
         segment_feedback('chordotonal organ',np.clip(leg_speed/0.20,0,1),34.0)
@@ -272,6 +286,8 @@ class ProprioceptiveBridge:
                     "JO_CE_wind_gravity":int(len(self.jo_ce)),
                     "JO_uncertain_silent":int(len(self.jo_uncertain)),
                     "aPhM_cibarium_mechanosensory":int(len(self.aphm)),
-                    "leg_taste_bristles_mechanical_drive":0})
+                    "leg_taste_bristles_mechanical_drive":0,
+                    "unlocalized_limb_receptors_not_driven":{name:sum(len(x) for x in unknown)
+                        for name,(_,unknown) in self.leg_segments.items()}})
         return out
 

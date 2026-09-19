@@ -712,13 +712,33 @@ class FlyBodyState(SpacecraftState):
 
     def advance_living(self, world: LivingUniverse, force_body: np.ndarray, torque_body: np.ndarray,
                        dt: float, *, flight_command: float, walking_command: float,
-                       motor_power_scale: float = 1.0) -> ContactState:
+                       motor_power_scale: float = 1.0,
+                       flight_force_body=None, contact_force_body=None,
+                       flight_torque_body=None, contact_torque_body=None) -> ContactState:
         dt=max(1e-6,float(dt)); self.last_motion_trace=[self.position.copy()]; b,alt,norm=world.nearest_body(self.position)
         power=float(np.clip(float(motor_power_scale),0.0,1.0))
         force_body=np.asarray(force_body,float)*power
         torque_body=np.asarray(torque_body,float)*power
         flight=float(np.clip(float(flight_command),0.0,1.0))
         attached=self.contact.on_surface and self.contact.body_id is not None
+        separated=flight_force_body is not None
+        if separated:
+            if any(x is None for x in (contact_force_body,flight_torque_body,contact_torque_body)):
+                raise ValueError('All four actuator components are required')
+            flight_force=np.asarray(flight_force_body,float)*power
+            contact_force=np.asarray(contact_force_body,float)*power
+            flight_torque=np.asarray(flight_torque_body,float)*power
+            contact_torque=np.asarray(contact_torque_body,float)*power
+            # A takeoff impulse is a leg reaction. Preserve its former full-scale
+            # calibration in the decoder/caller; never multiply leg force by wing activity.
+            free_accel=flight_force*self._linear_accel_gain(flight=1.0)
+            surface_accel=free_accel+contact_force*self._linear_accel_gain(flight=0.0)
+        else:
+            # Legacy external callers retain their original units. The experiment
+            # always supplies separated components, including on checkpoint resume.
+            free_accel=force_body*self._linear_accel_gain(flight=1.0)
+            surface_accel=force_body*self._linear_accel_gain(flight=flight)
+            flight_torque=torque_body;contact_torque=np.zeros(3)
 
         # Surface contact is now a real geometric constraint, not a sticky halo.
         # The physical surface, collision radius and attachment radius are identical.
@@ -729,12 +749,8 @@ class FlyBodyState(SpacecraftState):
         # command threshold and no host-injected takeoff decision.
         if attached and b is not None and b.body_id==self.contact.body_id:
             n=np.asarray(norm,float)
-            # Blend surface and flight force calibration continuously. force_body
-            # already contains the anatomical wing/leg mixture; flight only selects
-            # how strongly that command couples into free-air mechanics while the feet
-            # are still touching the surface.
-            contact_gain=self._linear_accel_gain(flight=flight)
-            fw=q_rotate(self.orientation,np.asarray(force_body,float))*contact_gain
+            # Apply each actuator's own calibration while contact is available.
+            fw=q_rotate(self.orientation,surface_accel)
             gb,gvec=world.gravity_at(self.position,self.GRAVITY_ACCELERATION)
             self.gravity_body_id=None if gb is None else gb.body_id
             self.gravity_world=np.asarray(gvec,dtype=np.float64)
@@ -755,6 +771,12 @@ class FlyBodyState(SpacecraftState):
             # after position moves, which otherwise manufactures false hops.  Release
             # only when the *current physical separating load* exceeds adhesion.
             if normal_acc > adhesion_acc:
+                if separated:
+                    # One final contact interval supplies the launch impulse. No
+                    # leg force or torque is carried through subsequent free flight.
+                    contact_dt=min(dt,self.FREE_FLIGHT_MAX_SUBSTEP)
+                    self.velocity += q_rotate(self.orientation,contact_force)*self._linear_accel_gain(flight=0.0)*contact_dt
+                    self.angular_velocity += self._angular_accel(contact_torque)*contact_dt
                 attached=False
                 self.contact=ContactState()
             else:
@@ -796,7 +818,7 @@ class FlyBodyState(SpacecraftState):
                     axis=np.zeros(3,dtype=np.float64); angle=0.0
                 stance_acc=axis*(self.SURFACE_STANCE_SPRING*angle)
                 stance_acc[:2] -= self.SURFACE_STANCE_DAMPING*self.angular_velocity[:2]
-                self.angular_velocity += (self._angular_accel(torque_body) + stance_acc)*dt
+                self.angular_velocity += (self._angular_accel(flight_torque+contact_torque) + stance_acc)*dt
                 ang_decay=self.ANGULAR_LINEAR_DRAG+self.ANGULAR_QUADRATIC_DRAG*np.abs(self.angular_velocity)
                 self.angular_velocity *= np.exp(-ang_decay*dt)
                 self.orientation=self._quat_step(self.orientation,self.angular_velocity,dt)
@@ -810,7 +832,7 @@ class FlyBodyState(SpacecraftState):
             for _ in range(nsub):
                 # Attitude first: forces and airflow below use the orientation the fly
                 # actually has during this sub-step, not the previous world-frame pose.
-                self.angular_velocity += self._angular_accel(torque_body)*h
+                self.angular_velocity += self._angular_accel(flight_torque)*h
                 ang_decay=self.ANGULAR_LINEAR_DRAG+self.ANGULAR_QUADRATIC_DRAG*np.abs(self.angular_velocity)
                 self.angular_velocity *= np.exp(-ang_decay*h)
                 self.orientation=self._quat_step(self.orientation,self.angular_velocity,h)
@@ -818,7 +840,7 @@ class FlyBodyState(SpacecraftState):
                 # Ordinary wing/body force is body-relative.  Gravity comes from the
                 # strongest local habitat field and falls with inverse-square distance,
                 # so sustained outward flight can actually escape a body's near field.
-                force_world=q_rotate(self.orientation,force_body)*self._linear_accel_gain(flight=1.0)
+                force_world=q_rotate(self.orientation,free_accel)
                 gb,gvec=world.gravity_at(self.position,self.GRAVITY_ACCELERATION)
                 self.gravity_body_id=None if gb is None else gb.body_id
                 self.gravity_world=np.asarray(gvec,dtype=np.float64)

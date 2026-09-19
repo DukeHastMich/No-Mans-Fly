@@ -36,6 +36,23 @@ import xml.etree.ElementTree as ET
 import numpy as np
 from world_visual import surface_channels
 
+def _point_acceptance(dot,sigma_internal,n_air,n_cornea):
+    """Same optical arithmetic in cache-sized row tiles; no ray/sample culling."""
+    accept=np.empty_like(dot)
+    n1=float(n_air);n2=float(n_cornea)
+    for start in range(0,len(dot),64):
+        stop=min(start+64,len(dot));d=dot[start:stop];front=d>0.
+        theta_ext=np.arccos(np.clip(d,0.,1.))
+        sin_internal=np.clip((n_air/n_cornea)*np.sin(theta_ext),0.,1.)
+        theta_internal=np.arcsin(sin_internal)
+        a=np.exp(-.5*np.square(theta_internal/sigma_internal[start:stop,None]))
+        ci=np.clip(np.cos(theta_ext),1e-9,1.);ct=np.clip(np.cos(theta_internal),1e-9,1.)
+        rs=np.square((n1*ci-n2*ct)/np.maximum(n1*ci+n2*ct,1e-12))
+        rp=np.square((n1*ct-n2*ci)/np.maximum(n1*ct+n2*ci,1e-12))
+        a*=np.clip(1.-.5*(rs+rp),0.,1.)*np.clip(d,0.,1.);a*=front
+        accept[start:stop]=a
+    return accept
+
 OPSIN_NM = {
     "R1-R6": 478.0,
     "R7p": 345.0,
@@ -748,9 +765,9 @@ class CompoundEyeRenderer:
         if len(ss):
             dirs_body=self._inverse_rotate(craft.orientation,dirs_world);dirs_body/=np.maximum(np.linalg.norm(dirs_body,axis=1,keepdims=True),1e-12)
             lum=np.asarray([x.luminosity for x in ss],dtype=np.float64);pulse=1.+.035*np.sin(.17*time_s+np.asarray([x.pulse_phase for x in ss]));star_strength=lum*pulse/(.20+(dist/12.)**2)
-            dot=np.clip(axes_body@dirs_body.T,-1.,1.);front=dot>0.;theta_ext=np.arccos(np.clip(dot,0.,1.));sin_internal=np.clip((self.config.n_air/self.config.n_cornea)*np.sin(theta_ext),0.,1.);theta_internal=np.arcsin(sin_internal)
+            dot=np.clip(axes_body@dirs_body.T,-1.,1.)
             ext_half=np.radians(fwhm*.5);internal_half=np.arcsin(np.clip((self.config.n_air/self.config.n_cornea)*np.sin(ext_half),0.,1.));sigma_internal=np.maximum(internal_half/math.sqrt(2.*math.log(2.)),1e-9)
-            accept=np.exp(-.5*np.square(theta_internal/sigma_internal[:,None]));n1=float(self.config.n_air);n2=float(self.config.n_cornea);ci=np.clip(np.cos(theta_ext),1e-9,1.);ct=np.clip(np.cos(theta_internal),1e-9,1.);rs=np.square((n1*ci-n2*ct)/np.maximum(n1*ci+n2*ct,1e-12));rp=np.square((n1*ct-n2*ci)/np.maximum(n1*ct+n2*ci,1e-12));accept*=np.clip(1.-.5*(rs+rp),0.,1.)*np.clip(dot,0.,1.);accept*=front
+            accept=_point_acceptance(dot,sigma_internal,self.config.n_air,self.config.n_cornea)
             sp_ops=scene_ops;point_raw=(accept*star_strength[None,:])@sp_ops
         else:point_raw=np.zeros_like(surface_raw)
         raw=point_raw+surface_raw

@@ -74,6 +74,11 @@ class MotorFrame:
     walking_command: float
     flight_command: float
     takeoff_command: float
+    # Separate actuator domains: ground reactions cannot become aerodynamic force.
+    flight_force_body: np.ndarray | None = None
+    contact_force_body: np.ndarray | None = None
+    flight_torque_body: np.ndarray | None = None
+    contact_torque_body: np.ndarray | None = None
 
 
 class AnatomicalMotorBridge:
@@ -204,9 +209,15 @@ class AnatomicalMotorBridge:
                             steering_muscles[sm][ss].append(a)
             elif sub in legs:
                 d = self._joint_direction(typ)
-                # Unknown named leg MNs still contribute weakly to limb activation,
-                # while identified flexor/extensor labels preserve direction.
-                if ss: legs[sub][ss].append(a * (d if d != 0 else 0.25))
+                # Missing mechanical direction is not evidence for protraction.
+                # Preserve unresolved rates without inventing a positive leg command.
+                if ss and d != 0:
+                    legs[sub][ss].append(a*d)
+                else:
+                    if ss:legs[sub][ss].append(0.0)  # retain pooling normalization
+                    unresolved[body]={"rate_hz":hz,"subclass":sub,"type":typ,
+                                      "instance":inst,"side":side_key,
+                                      "reason":"unresolved leg direction or laterality"}
             elif sub == "nm":
                 if ss: neck[ss].append(a)
             elif sub == "hm":
@@ -350,19 +361,23 @@ class AnatomicalMotorBridge:
             0.012*wing_diff,
             0.030*wing_avg + (0.090*takeoff_avg if on_surface else 0.0),
         ],dtype=np.float64)
-        # Reduced wing-hinge mechanics: b1/b2 advance the basalare, b3
-        # opposes it. Activity is a bounded recruitment proxy, NOT measured
-        # spike phase. Neutral antagonist balance leaves the established force
-        # envelope unchanged. Calibration is documented in FLIGHT_MODEL.md.
+        # Reduced b1/b2 pitch recruitment. b3 remains in its existing turn
+        # readout, but is NOT an established scalar pitch antagonist. Mapping
+        # tonic unilateral b3 firing to nose-down torque created a persistent
+        # artificial corkscrew. Do not infer that function from hinge anatomy.
+        # Rates still omit wingbeat phase; these gains remain an approximation.
         stroke={side:float(np.clip(
-            0.5*(steer_activity['b1'][side]+steer_activity['b2'][side])
-            -steer_activity['b3'][side],-1.,1.)) for side in (-1,+1)}
+            0.5*(steer_activity['b1'][side]+steer_activity['b2'][side]),0.,1.))
+            for side in (-1,+1)}
         powered_stroke=0.5*(WL*stroke[-1]+WR*stroke[+1])
         # x forward, z dorsal: anterior upward force gives NEGATIVE y torque
         # (nose up). No power means no aerodynamic pitch or yaw torque.
         flight_pitch=-0.018*powered_stroke
         torque=np.array([
-            0.030*wing_diff + 0.008*e.abdomen_bend,
+            # Internal abdominal muscle activity is not an external roll torque.
+            # Keep the effector, but wait for articulated inertia/aerodynamic drag
+            # before coupling it to whole-body angular momentum.
+            0.030*wing_diff,
             # Neck effectors move the head; they do not directly rotate the thorax.
             # Leg posture contributes through contact; the wing hinge supplies flight pitch.
             leg_pitch + flight_pitch,
@@ -372,6 +387,17 @@ class AnatomicalMotorBridge:
             leg_yaw + 0.018*wing_avg*steering_yaw,
         ],dtype=np.float64)
 
+        contact_force=np.array([leg_forward + (0.035*takeoff_avg if on_surface else 0.0),
+                                0.0, (0.090*takeoff_avg if on_surface else 0.0)],dtype=float)
+        contact_torque=np.array([0.0,leg_pitch,leg_yaw],dtype=float)
+        flight_force=force-contact_force
+        flight_torque=torque-contact_torque
+        # Jump and walking actuators have different force scales. Express the jump
+        # in surface units (flight/surface reference ratio 3000/30), preserving the
+        # established full-jump scale without making it depend on wing activity.
+        if on_surface:
+            contact_force += 99.0*np.array([0.035*takeoff_avg,0.,0.090*takeoff_avg])
+
         subclass_rates: dict[str,dict[str,float]]={}
         for (sub,side),vals in subclass_sum.items():
             subclass_rates.setdefault(sub,{})[side]=float(np.mean(vals)) if vals else 0.0
@@ -379,6 +405,8 @@ class AnatomicalMotorBridge:
         motor_values=list(rates.values())
         frame=MotorFrame(
             force_body=force, torque_body=torque, effectors=e, neuron_rates=rates,
+            flight_force_body=flight_force, contact_force_body=contact_force,
+            flight_torque_body=flight_torque, contact_torque_body=contact_torque,
             subclass_rates=subclass_rates, unresolved=unresolved,
             mean_motor_hz=float(np.mean(motor_values)) if motor_values else 0.0,
             feeding_command=float(np.clip(max(0.0,e.proboscis_extension)*0.45 + e.pharyngeal_pump*0.55,0,1)),

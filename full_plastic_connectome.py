@@ -483,7 +483,8 @@ class FullMaleCNSCore:
         self.activity_ema_hz = np.zeros(self.n, dtype=np.float16)
 
         # Runtime-only acceleration buffers.  Persisted learning remains float16 and
-        # authoritative; effective_scale is rebuilt from it at each epoch boundary.
+        # authoritative; effective_scale is rebuilt once per learning window, or
+        # each standalone epoch. No acceleration cache is persisted.
         self._delivery_scale = np.empty(self.edge_count, dtype=np.float32)
         _max_syn = int(np.max(self.synapse_count)) if self.edge_count else 0
         self._delivery_log_syn_lut = np.log1p(np.arange(_max_syn + 1, dtype=np.float32)).astype(np.float32, copy=False)
@@ -956,6 +957,8 @@ class FullMaleCNSCore:
         self._refresh_keepalive_bias()
 
     def reset_learning(self):
+        window=getattr(self,'_learning_window',None)
+        if window is not None:window.pop('delivery_scale_ready',None)
         self.plastic_delta.fill(0)
         self.activity_ema_hz.fill(0)
         self._refresh_memory_cache()
@@ -1052,13 +1055,17 @@ class FullMaleCNSCore:
         spike_counts = np.zeros(self.n, dtype=np.int32)
 
         steps = max(1, int(round(neural_ms / c.dt_ms)))
-        if _NUMBA_AVAILABLE and _deliver_due_kernel is not None:
+        window=getattr(self,'_learning_window',None)
+        if (_NUMBA_AVAILABLE and _deliver_due_kernel is not None
+                and (window is None or not window.get('delivery_scale_ready',False))):
             # Same float16 -> float32 plastic conversion and multiply as the legacy
             # per-delivery expression, computed once because plasticity is constant
             # throughout an epoch and changes only during consolidation afterward.
             self._delivery_scale[:] = self.plastic_delta
             self._delivery_scale += np.float32(1.0)
             self._delivery_scale *= self.edge_gain
+            self._delivery_scale_token=object()
+            if window is not None:window['delivery_scale_ready']=True
         gpu_result=None
         if self._epoch_gpu_requested and self._epoch_gpu_backend is None:
             self._activate_gpu_epoch()
@@ -1224,6 +1231,8 @@ class FullMaleCNSCore:
         return path
 
     def load_memory(self,path:str|Path):
+        window=getattr(self,'_learning_window',None)
+        if window is not None:window.pop('delivery_scale_ready',None)
         mem=np.load(path,allow_pickle=False); meta=json.loads(str(mem["metadata"]))
         if int(meta["edge_count"])!=self.edge_count or int(meta["neuron_count"])!=self.n: raise ValueError("memory does not match graph")
         self.plastic_delta.fill(0); self.activity_ema_hz.fill(0)

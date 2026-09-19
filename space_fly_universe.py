@@ -145,6 +145,14 @@ def q_rotate(q: np.ndarray, v: np.ndarray) -> np.ndarray:
     """Rotate vector(s) from body to world with quaternion q."""
     v = np.asarray(v, dtype=np.float64)
     single = v.ndim == 1
+    if single:
+        # Exact scalar spelling of the two cross products below. Avoid NumPy's
+        # general broadcasting/axis machinery for thousands of 3-vector calls.
+        x,y,z=map(float,v);a,b,c=map(float,q[1:]);w=float(q[0])
+        tx=2.0*(b*z-c*y);ty=2.0*(c*x-a*z);tz=2.0*(a*y-b*x)
+        return np.array([(x+w*tx)+(b*tz-c*ty),
+                         (y+w*ty)+(c*tx-a*tz),
+                         (z+w*tz)+(a*ty-b*tx)],dtype=np.float64)
     vv = v.reshape((-1, 3))
     qv = q[1:]
     t = 2.0 * np.cross(np.broadcast_to(qv, vv.shape), vv)

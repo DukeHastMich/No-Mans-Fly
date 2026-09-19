@@ -112,18 +112,21 @@ class CudaEpoch:
         if core.n!=self.n or core.edge_count!=self.edges:raise ValueError('GPU graph changed')
         started=time.perf_counter();cuda=self.cuda;c=core.config;n=core.n
         if c.modulator_edge_scale!=self.mod_scale:raise ValueError('GPU modulation configuration changed')
-        scale_min=float(core._delivery_scale.min());scale_max=float(core._delivery_scale.max())
-        if not (scale_min>0 and math.isfinite(scale_max)):raise ValueError('Scale range requires CPU accumulation')
-        # Every float32 contribution is an integer multiple of this smallest ULP.
-        # If the absolute sum occupies <=53 bits, float64 addition is exact in ANY
-        # order, including concurrent atomics. The bound covers all active subsets
-        # and cancellation, and is checked on each epoch's actual scale range.
-        for low,high in self.ranges:
-            if high==0:continue
-            lower=low*scale_min*(1.-2.**-23);upper=high*scale_max*(1.+2.**-23)
-            quantum_exp=math.frexp(lower)[1]-24
-            if math.log2(upper*max(1,self.max_indegree))-quantum_exp>52:
-                raise ValueError('Exact GPU sum bound exceeded; use ordered CPU path')
+        token=getattr(core,'_delivery_scale_token',None)
+        refresh_weights=token is None or token is not getattr(self,'_weights_token',None)
+        if refresh_weights:
+            scale_min=float(core._delivery_scale.min());scale_max=float(core._delivery_scale.max())
+            if not (scale_min>0 and math.isfinite(scale_max)):raise ValueError('Scale range requires CPU accumulation')
+            # Every float32 contribution is an integer multiple of this smallest ULP.
+            # If the absolute sum occupies <=53 bits, float64 addition is exact in ANY
+            # order, including concurrent atomics. The bound covers all active subsets
+            # and cancellation, and is checked on each epoch's actual scale range.
+            for low,high in self.ranges:
+                if high==0:continue
+                lower=low*scale_min*(1.-2.**-23);upper=high*scale_max*(1.+2.**-23)
+                quantum_exp=math.frexp(lower)[1]-24
+                if math.log2(upper*max(1,self.max_indegree))-quantum_exp>52:
+                    raise ValueError('Exact GPU sum bound exceeded; use ordered CPU path')
         rng=copy.deepcopy(core.rng)
         external=np.zeros((steps,n),dtype=np.bool_)
         for step in range(steps):
@@ -168,13 +171,18 @@ class CudaEpoch:
                 key=next(iter(self._configuration_cache))
                 _,old_graph=self._configuration_cache.pop(key)
                 if old_graph is not None:old_graph.close()
-        for k,a in host.items():self.buffers[k].copy_to_device(a,stream=self.stream)
+        for k,a in host.items():
+            if k=='scale' and not refresh_weights:continue
+            self.buffers[k].copy_to_device(a,stream=self.stream)
         v=self.buffers['v'];g=self.buffers['g'];mod=self.buffers['mod'];refr=self.buffers['refr']
         dring=self.buffers['ring'];dext=self.buffers['external'];imp=self.buffers['impulses']
         eligible=self.buffers['eligible'];dec=self.buffers['dec'];counts=self.buffers['counts'];scale=self.buffers['scale']
         active=self.buffers['active'];active_counts=self.buffers['active_counts']
         accum=self.buffers['accum'];touched=self.buffers['touched'];initial=self.buffers['initial']
-        self.weights[(self.edges+255)//256,256,self.stream](self.edge_ids,self.base,self.mod_base,scale,self.fast,self.slow)
+        if refresh_weights:
+            self.weights[(self.edges+255)//256,256,self.stream](self.edge_ids,self.base,self.mod_base,scale,self.fast,self.slow)
+            self.stream.synchronize()
+            self._weights_token=token
         def args(step):
             return (accum,touched,v,g,mod,refr,dring,active,active_counts,initial,core.delay_steps,
                 dext,step,eligible,imp,dec,np.float32(c.v_rest),core.em,core.couple,core.eg,

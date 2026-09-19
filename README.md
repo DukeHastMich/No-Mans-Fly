@@ -55,6 +55,14 @@ By default, **0.10 seconds of world time equals 100 ms of neural time**. The con
 
 Twelve slices are drawing opportunities, **not a promise of twelve FPS**. The viewer FPS field is a rendering cap. Neural integration, sensing, learning, and checkpoint I/O can run slower than real time; consult the Performance tab's new-frame rate and simulation-time ratio.
 
+The current optimization pass reuses unchanged delivery weights across slices,
+processes optical acceptance in cache-sized tiles, and avoids general array
+machinery for single-vector rotations. On one local RTX 4060 Ti run with two CPU
+workers, warmed 100-ms windows fell from about **8.02 s to 5.18 s** (1.55x
+throughput). Full state hashes matched the reference over three windows. This is
+an isolated short-run comparison, not a real-time or FPS guarantee. See
+[performance measurements and validation](PERFORMANCE.md).
+
 For unattended local runs, `RUN_HEADLESS_OVERNIGHT.bat` runs the default Specimen-003 lineage without the GUI after setup. It saves rendering overhead, not the neural workload. Do not run a second process against the same live lineage. Ctrl+C stops the headless runner and triggers its exit-save path.
 
 ## World pack
@@ -80,7 +88,7 @@ Automatic high-activity cloning has been retired. Positive plastic saturation an
 
 The evaluation helper rejects uniform amplification and excessive quiet-state firing. An automated isolated replay, selection, pruning, and promotion loop is still unfinished. The full-graph compiler enforces explicit structural strength transfers for new edges and preserves fractional gains. See [the growth model](GROWTH_MODEL.md).
 
-Flight now includes a reduced muscle-driven nose-up/nose-down pathway, power-gated aerodynamic steering, and body-relative drag. Its gains and rate-to-muscle interpretation remain engineering approximations; these repairs do not establish realistic long-term fly behavior. See [the flight model](FLIGHT_MODEL.md) and [sensory coverage and limitations](SENSORY_MODEL.md).
+Flight includes reduced b1/b2-driven pitch, power-gated aerodynamic steering, and body-relative drag. An unsupported b3-to-pitch coupling that produced sustained nose-down torque has been removed; validated bidirectional pitch control is still incomplete. Its gains and rate-to-muscle interpretation remain engineering approximations; these repairs do not establish realistic long-term fly behavior. See [the flight model](FLIGHT_MODEL.md) and [sensory coverage and limitations](SENSORY_MODEL.md).
 
 ## Code and data
 
@@ -99,3 +107,7 @@ Keep the complete runtime source tree and required assets. `Historical/` contain
 Recent development checks exercised the full 166,700-neuron model, CPU/GPU paths, sliced stepping, checkpoint resume, shared spectral sampling, growth safeguards, and hidden GUI rendering. These are implementation checks, not biological validation or guaranteed performance on another machine.
 
 See [ATTRIBUTION.md](ATTRIBUTION.md) for data and project attribution.
+
+## Embodiment research status
+
+[System-by-system research audit](EMBODIMENT_AUDIT.md): current anatomical routing, three corrected wiring defects, and unresolved body/transduction requirements. The simulator does not yet provide a validated adult fly body. In particular, signed pitch feedback, joint-resolved proprioception, localized strain and acoustic transduction remain incomplete. No exploration or upright behavioral controller was added.
